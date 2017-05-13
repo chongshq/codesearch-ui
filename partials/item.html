@@ -1,0 +1,356 @@
+<a href="./#/" class="btn btn-primary btn-sm">&#8592;  Home</a>
+
+<p class="h2 text-center">[Item] <strong>{{ template.name }}</strong> (<strong>{{template.entry}}</strong>)</p>
+<br>
+<table class="table table-striped table-condensed table-bordered template-table">
+  <thead>
+    <tr>
+      <th class="text-center">ID</th>
+      <th class="text-center">{{template.entry}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td>{{ template.name }}</td>
+    </tr>
+    <tr ng-show="template.SellPrice != 0">
+      <td>SellPrice</td>
+      <td>{{ (template.SellPrice - (template.SellPrice | limitTo: -4)) != 0 ? ((template.SellPrice) - (template.SellPrice | limitTo: -4)) / 10000 +"g" :  "" }}
+        {{ ((template.SellPrice | limitTo: -4) - (template.SellPrice | limitTo: -2)) != 0 ? ((template.SellPrice | limitTo: -4) - (template.SellPrice | limitTo: -2)) / 100 +"s" :  "" }}
+        {{ (template.SellPrice | limitTo: -2) != 0 ? (template.SellPrice | limitTo: -2)+"c" :  "" }}
+      </td>
+    </tr>
+    <tr>
+      <td>Quality</td>
+      <td>{{ template.QualityText }}</td>
+    </tr>
+    <tr ng-show="template.RequiredLevel != 0">
+      <td>RequiredLevel</td>
+      <td>
+        {{ template.RequiredLevel }}
+      </td>
+    </tr>
+    <tr ng-show="template.ItemLevel != 1">
+      <td>ItemLevel</td>
+      <td>
+        {{ template.ItemLevel }}
+      </td>
+    </tr>
+    <tr ng-show='template.description != ""'>
+      <td>Description</td>
+      <td>
+        {{ template.description }}
+      </td>
+    </tr>
+    <tr ng-show='template.startquest != 0'>
+      <td>Quest Start</td>
+      <td>
+        <a ng-href="./#/quest/{{ template.startquest }}">{{ queststart.LogTitle }}</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<tabset>
+  <tab class="hidden">
+    <table class="table table-striped table-condensed">
+      <thead>
+        <th class="text-center"><!-- Hackfix to display nothing --></th>
+      </thead>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-npc-vendor" heading="Sold by NPC ({{ vendorsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="entry|parseInt">NPC ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">NPC Name</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="vendor in vendors" ts-repeat>
+          <td><a ng-href="./#/npc/{{ vendor.entry }}">{{ vendor.entry }}</a></td>
+          <td><a ng-href="./#/npc/{{ vendor.entry }}">{{ vendor.name }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-npc-loot" heading="Dropped by NPC ({{ npcLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">NPC ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">NPC Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="npcLoot in npcLoots" ts-repeat>
+          <td><a ng-href="./#/npc/{{ npcLoot.Entry }}">{{ npcLoot.Entry }}</a></td>
+          <td><a ng-href="./#/npc/{{ npcLoot.Entry }}">{{ npcLoot.name }}</a></td>
+          <td>{{ npcLoot.Reference }}</td>
+          <td>{{ npcLoot.Chance }}</td>
+          <td>{{ npcLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ npcLoot.GroupId }}</td>
+          <td>{{ npcLoot.MinCount }}</td>
+          <td>{{ npcLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-skinning-loot" heading="Skinned from NPC ({{ skinningLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">NPC ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">NPC Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="skinningLoot in skinningLoots" ts-repeat>
+          <td><a ng-href="./#/npc/{{ skinningLoot.Entry }}">{{ skinningLoot.Entry }}</a></td>
+          <td><a ng-href="./#/npc/{{ skinningLoot.Entry }}">{{ skinningLoot.name }}</a></td>
+          <td>{{ skinningLoot.Reference }}</td>
+          <td>{{ skinningLoot.Chance }}</td>
+          <td>{{ skinningLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ skinningLoot.GroupId }}</td>
+          <td>{{ skinningLoot.MinCount }}</td>
+          <td>{{ skinningLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-gameobject-loot" heading="Contained in Gameobject ({{ gameobjectLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">GameObject ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">GameObject Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="gameobjectLoot in gameobjectLoots" ts-repeat>
+          <td>{{ gameobjectLoot.Entry }}</td>
+          <td>{{ gameobjectLoot.name }}</td>
+          <td>{{ gameobjectLoot.Reference }}</td>
+          <td>{{ gameobjectLoot.Chance }}</td>
+          <td>{{ gameobjectLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ gameobjectLoot.GroupId }}</td>
+          <td>{{ gameobjectLoot.MinCount }}</td>
+          <td>{{ gameobjectLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-reference-loot" heading="Contained in Reference ({{ referenceLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Reference ID</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="referenceLoot in referenceLoots" ts-repeat>
+          <td>{{ referenceLoot.Entry }}</td>
+          <td>{{ referenceLoot.Reference }}</td>
+          <td>{{ referenceLoot.Chance }}</td>
+          <td>{{ referenceLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ referenceLoot.GroupId }}</td>
+          <td>{{ referenceLoot.MinCount }}</td>
+          <td>{{ referenceLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-item-loot" heading="Dropped by Item ({{ itemLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Item ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">Item Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="itemLoot in itemLoots" ts-repeat>
+          <td><a ng-href="./#/item/{{ itemLoot.Entry }}">{{ itemLoot.Entry }}</a></td>
+          <td><a ng-href="./#/item/{{ itemLoot.Entry }}">{{ itemLoot.name }}</a></td>
+          <td>{{ itemLoot.Reference }}</td>
+          <td>{{ itemLoot.Chance }}</td>
+          <td>{{ itemLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ itemLoot.GroupId }}</td>
+          <td>{{ itemLoot.MinCount }}</td>
+          <td>{{ itemLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-fishing-loot" heading="Fished in ({{ fishingLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Fishing ID</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="fishingLoot in fishingLoots" ts-repeat>
+          <td>{{ fishingLoot.Entry }}</td>
+          <td>{{ fishingLoot.Reference }}</td>
+          <td>{{ fishingLoot.Chance }}</td>
+          <td>{{ fishingLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ fishingLoot.GroupId }}</td>
+          <td>{{ fishingLoot.MinCount }}</td>
+          <td>{{ fishingLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-disenchant-loot" heading="Disenchanted from Disenchant ({{ disenchantLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Item ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">Item Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="disenchantLoot in disenchantLoots" ts-repeat>
+          <td><a ng-href="./#/item/{{ disenchantLoot.Entry }}">{{ disenchantLoot.Entry }}</a></td>
+          <td><a ng-href="./#/item/{{ disenchantLoot.Entry }}">{{ disenchantLoot.name }}</a></td>
+          <td>{{ disenchantLoot.Reference }}</td>
+          <td>{{ disenchantLoot.Chance }}</td>
+          <td>{{ disenchantLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ disenchantLoot.GroupId }}</td>
+          <td>{{ disenchantLoot.MinCount }}</td>
+          <td>{{ disenchantLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-prospecting-loot" heading="Dropped by Prospecting ({{ prospectingLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Item ID</th>
+        <th class="text-center" ts-criteria="Item|parseInt">Item Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="prospectingLoot in prospectingLoots" ts-repeat>
+          <td><a ng-href="./#/item/{{ prospectingLoot.Entry }}">{{ prospectingLoot.Entry }}</a></td>
+          <td><a ng-href="./#/item/{{ prospectingLoot.Entry }}">{{ prospectingLoot.name }}</a></td>
+          <td>{{ prospectingLoot.Reference }}</td>
+          <td>{{ prospectingLoot.Chance }}</td>
+          <td>{{ prospectingLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ prospectingLoot.GroupId }}</td>
+          <td>{{ prospectingLoot.MinCount }}</td>
+          <td>{{ prospectingLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-milling-loot" heading="Dropped by Milling ({{ millingLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Milling ID</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="millingLoot in millingLoots" ts-repeat>
+          <td>{{ millingLoot.Entry }}</td>
+          <td>{{ millingLoot.Reference }}</td>
+          <td>{{ millingLoot.Chance }}</td>
+          <td>{{ millingLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ millingLoot.GroupId }}</td>
+          <td>{{ millingLoot.MinCount }}</td>
+          <td>{{ millingLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-pickpocketing-loot" heading="Pickpocked from ({{ pickpocketingLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">NPC ID</th>
+        <th class="text-center" ts-criteria="name|lowercase">NPC Name</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="pickpocketingLoot in pickpocketingLoots" ts-repeat>
+          <td><a ng-href="./#/npc/{{ pickpocketingLoot.Entry }}">{{ pickpocketingLoot.Entry }}</a></td>
+          <td><a ng-href="./#/npc/{{ pickpocketingLoot.Entry }}">{{ pickpocketingLoot.name }}</a></td>
+          <td>{{ pickpocketingLoot.Reference }}</td>
+          <td>{{ pickpocketingLoot.Chance }}</td>
+          <td>{{ pickpocketingLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ pickpocketingLoot.GroupId }}</td>
+          <td>{{ pickpocketingLoot.MinCount }}</td>
+          <td>{{ pickpocketingLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab class="hidden" id="tab-spell-loot" heading="Dropped by spell ({{ spellLootsCount }})">
+    <table class="table table-striped table-condensed" ts-wrapper>
+      <thead>
+        <th class="text-center" ts-criteria="Entry|parseInt">Spell ID</th>
+        <th class="text-center" ts-criteria="Reference|parseInt">Reference</th>
+        <th class="text-center" ts-criteria="Chance|parseFloat" ts-default="descending">Chance</th>
+        <th class="text-center" ts-criteria="QuestRequired|lowercase">Quest Required</th>
+        <th class="text-center" ts-criteria="GroupID|parseInt">Group ID</th>
+        <th class="text-center" ts-criteria="MinCount|parseInt">Min Count</th>
+        <th class="text-center" ts-criteria="MaxCount|parseInt">Max Count</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="spellLoot in spellLoots" ts-repeat>
+          <td><a ng-href="./#/spell/{{ spellLoot.Entry }}">{{ spellLoot.Entry }}</td>
+          <td>{{ spellLoot.Reference }}</td>
+          <td>{{ spellLoot.Chance }}</td>
+          <td>{{ spellLoot.QuestRequired == 0 ? "No" : "Yes" }}</td>
+          <td>{{ spellLoot.GroupId }}</td>
+          <td>{{ spellLoot.MinCount }}</td>
+          <td>{{ spellLoot.MaxCount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+</tabset>
+

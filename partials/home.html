@@ -1,0 +1,140 @@
+<div class="row">
+  <form class="form-inline">
+    
+      
+        <!--<div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-1">
+
+          </div>
+          
+          <div class="col-md-1">-->
+            <div class="form-group">
+              <select ng-model="language" class="form-control"
+                    ng-options="l for l in languages">               
+              </select>
+            </div>
+            <div class="form-group">
+              <select ng-model="lib" class="form-control"
+                    ng-options="name for name in libNames">               
+              </select>
+            </div>
+          <!--</div>-->
+          <!--<div class="col-md-6">-->
+            <div class="form-group">
+              <input type="text" class="form-control" id="search" placeholder="Search Function name or Class name" ng-model="searchstr">
+            </div>
+          <!--</div>
+          <div class="col-md-2">-->
+            <button type="submit" class="btn btn-primary" ng-click="search(searchstr)">Search</button>
+          <!--</div>
+          <div class="col-md-1"></div>-->
+       
+        
+       
+        <!--</div>-->
+  </form>
+
+  <br>
+  <p><small>Database version: <strong>{{ version.db_version }}</strong></small></p>
+  <br>
+
+  <div class="panel panel-primary hidden results-panel" id="item-panel">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="glyphicon glyphicon-minus show-hide-button" aria-hidden="true" ng-show="showItems" ng-click="showItems = false"></span><span class="glyphicon glyphicon-plus show-hide-button" aria-hidden="true" ng-show="!showItems" ng-click="showItems = true"></span> Items</h3>
+    </div>
+    <div class="panel-body" ng-show="showItems">
+      <table class="table table-striped table-condensed">
+        <thead>
+          <th class="text-center">ID</th>
+          <th class="text-center">Name</th>
+          <th class="text-center">Required Level</th>
+          <th class="text-center">Item Level</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in items">
+            <td class="text-center"><a ng-href="./#/item/{{ item.entry }}">{{ item.entry }}</a></td>
+            <td class="text-center"><a ng-href="./#/item/{{ item.entry }}">{{ item.name }}</a></td>
+            <td>{{ item.RequiredLevel }}</td>
+            <td>{{ item.ItemLevel }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel panel-success hidden results-panel" id="npc-panel">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="glyphicon glyphicon-minus show-hide-button" aria-hidden="true" ng-show="showNPCs" ng-click="showNPCs = false"></span><span class="glyphicon glyphicon-plus show-hide-button" aria-hidden="true" ng-show="!showNPCs" ng-click="showNPCs = true"></span> NPCs</h3>
+    </div>
+    <div class="panel-body" ng-show="showNPCs">
+      <table class="table table-striped table-condensed">
+        <thead>
+          <th class="text-center">ID</th>
+          <th class="text-center">Name</th>
+          <th class="text-center">Subname</th>
+          <th class="text-center">MinLevel</th>
+          <th class="text-center">MaxLevel</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="npc in npcs">
+            <td class="text-center"><a ng-href="./#/npc/{{ npc.entry }}">{{ npc.entry }}</a></td>
+            <td class="text-center"><a ng-href="./#/npc/{{ npc.entry }}">{{ npc.name }}</a></td>
+            <td>{{ npc.subname }}</td>
+            <td>{{ npc.minlevel }}</td>
+            <td>{{ npc.maxlevel }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel panel-warning hidden results-panel" id="quest-panel">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="glyphicon glyphicon-minus show-hide-button" aria-hidden="true" ng-show="showQuests" ng-click="showQuests = false"></span><span class="glyphicon glyphicon-plus show-hide-button" aria-hidden="true" ng-show="!showQuests" ng-click="showQuests = true"></span> Quests</h3>
+    </div>
+    <div class="panel-body" ng-show="showQuests">
+      <table class="table table-striped table-condensed">
+        <thead>
+          <th class="text-center">ID</th>
+          <th class="text-center">LogTitle</th>
+          <th class="text-center">MinLevel</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="quest in quests">
+            <td class="text-center"><a ng-href="./#/quest/{{ quest.ID }}">{{ quest.ID }}</a></td>
+            <td class="text-center"><a ng-href="./#/quest/{{ quest.ID }}">{{ quest.LogTitle }}</a></td>
+            <td>{{ quest.MinLevel }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel panel-danger hidden results-panel" id="spell-panel">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="glyphicon glyphicon-minus show-hide-button" aria-hidden="true" ng-show="showSpells" ng-click="showSpells = false"></span><span class="glyphicon glyphicon-plus show-hide-button" aria-hidden="true" ng-show="!showSpells" ng-click="showSpells = true"></span> Spells</h3>
+    </div>
+    <div class="panel-body" ng-show="showSpells">
+      <table class="table table-striped table-condensed">
+        <thead>
+          <th class="text-center">ID</th>
+          <th class="text-center">Name</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="spell in spells">
+            <td class="text-center"><a ng-href="./#/spell/{{ spell.id }}">{{ spell.id }}</a></td>
+            <td class="text-center"><a ng-href="./#/spell/{{ spell.id }}">{{ spell.name }}</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <br>
+  <p class="lead text-center hidden" id="no-items-found">No Items found.</p>
+  <p class="lead text-center hidden" id="no-npcs-found">No NPCs found.</p>
+  <p class="lead text-center hidden" id="no-quests-found">No Quests found.</p>
+  <p class="lead text-center hidden" id="no-spells-found">No Spells found.</p>
+
+</div>
