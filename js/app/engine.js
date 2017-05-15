@@ -3,20 +3,32 @@
 
 (function () {
   'use strict';
-  var app = angular.module('engine', ['ui.router', 'ui.bootstrap', 'chieffancypants.loadingBar', 'tableSort']);
-
-  app.controller("HomeController", function($scope, $rootScope, $http) {
+  var app = angular.module('engine', ['ui.router', 'ui.bootstrap', 'chieffancypants.loadingBar', 'tableSort', 'ngSanitize']);
+  app.filter('getKey',['$sce',function($sce){
+     return function(content,match) {
+            var reg = new　RegExp(match,'g');
+            content.replace(reg,'<em>'+match+'</em>');
+            return $sce.trustAsHtml(content);
+      }
+  }]) 
+  app.controller("HomeController", function($scope, $rootScope, $http, $location, $anchorScroll) {
 
     var request = app.api + "version",
-        itemPanel = angular.element(document.querySelector("#item-panel")),
-        npcPanel = angular.element(document.querySelector("#npc-panel")),
+        itemPanel = angular.element(document.querySelector("#doc-panel")),
+        npcPanel = angular.element(document.querySelector("#sof-panel")),
         questPanel = angular.element(document.querySelector("#quest-panel")),
         spellPanel = angular.element(document.querySelector("#spell-panel")),
         noItemsFound = angular.element(document.querySelector("#no-items-found")),
         noNPCsFound = angular.element(document.querySelector("#no-npcs-found")),
         noQuestsFound = angular.element(document.querySelector("#no-quests-found")),
-        noSpellsFound = angular.element(document.querySelector("#no-spells-found"));
+        noSpellsFound = angular.element(document.querySelector("#no-spells-found")),
+        nav1 = angular.element(document.querySelector("#doc-nav")),
+        nav2 = angular.element(document.querySelector("#sof-nav"));
+        
     var requestLibName = app.api + "lib?language=";
+    var requestFromSOF = "";
+    var requestFromDoc = "";
+
 
     $scope.searchstr = $rootScope.history;
 
@@ -33,30 +45,55 @@
       console.log("Error in VERSION $http.get request");
     });
 
+    $scope.showHeader = true;
     $scope.showItems = true;
     $scope.showNPCs = true;
     $scope.showQuests = true;
     $scope.showSpells = true;
     $scope.languages = ["java"];
     $scope.language = $scope.languages[0]; // default first language(java)
+    $scope.libNames = ["choose lib"];
 
     $http.get( requestLibName+ $scope.languages[0])   // fetch lib name for the given language : default java
       .success(function(data, status, header, config) {
       console.log(data);
+      
       $scope.libNames = data["lib"];
     })
       .error(function(data, status, header, config) {
       console.log("Error in ITEM $http.get");
     });
 
-    $scope.search = function(searchstr) {
+    $scope.gotoSection = function(section) {
+      console.log(section);
+      $location.hash(section);
 
-      if (typeof searchstr === 'undefined' || searchstr.length < 4) {
-        alert("Please insert a string of at least 4 characters.");
-        return;
+      $anchorScroll();
+      if(section=='doc-panel'){
+        nav1.addClass("active");
+        nav2.removeClass("active");
+      } else if(section == 'sof-panel'){
+        nav1.removeClass("active");
+        nav2.addClass("active");
+      } else{
+
       }
 
+    };
+
+    $scope.search = function(searchstr) {
+
+      if ($scope.lib == null) {
+        alert("Please select a lib name.");
+        return;
+      }
+      if (typeof searchstr === 'undefined') {
+        alert("Please insert a function name or class name");
+        return;
+      }
+      $rootScope.match = searchstr;
       $rootScope.history = searchstr;
+      $scope.showHeader = false;
 
       itemPanel.addClass("hidden");
       npcPanel.addClass("hidden");
@@ -69,12 +106,20 @@
       noSpellsFound.addClass("hidden");
 
       /* looking for items... */
-      request = app.api + "item/template/" + searchstr;
+      requestFromDoc = app.api + "qFromDoc?lib=" + $scope.lib +"&keyword=" + searchstr;
 
-      $http.get( request )
+      $http.get( requestFromDoc )
         .success(function(data, status, header, config) {
-
-        $scope.items = data;
+        var temp = [];
+        for(var i = 0;i<data["doc"].length;i++){
+          var d = data["doc"][i];
+          var t = {};
+          t["title"] = d["title"];
+          t["url"] = d["url"];
+          t["code"] = d["code"].toString().replace(new RegExp("(" + $scope.searchstr + ")","ig"), "<strong>" + $scope.searchstr + "</strong>");
+          temp.push(t);
+        }
+        $scope.items = temp;
         if ($scope.items.length > 0) { // we found items
           itemPanel.removeClass("hidden");
         } else {  // we didn't find any items
@@ -83,16 +128,16 @@
 
       })
         .error(function(data, status, header, config) {
-        console.log("Error in ITEM $http.get");
+        console.log("Error in api doc $http.get");
       });
 
       /* looking for NPCs... */
-      request = app.api + "creature/template/" + searchstr;
+      requestFromSOF = app.api + "q?lib=" + $scope.lib + "&keyword=" + searchstr;
 
-      $http.get( request )
+      $http.get( requestFromSOF )
         .success(function(data, status, header, config) {
 
-        $scope.npcs = data;
+        $scope.npcs = data["sof"];
         if ($scope.npcs.length > 0) { // we found npcs
           npcPanel.removeClass("hidden");
         } else {  // we didn't find any npcs
