@@ -23,7 +23,7 @@
         noQuestsFound = angular.element(document.querySelector("#no-quests-found")),
         noSpellsFound = angular.element(document.querySelector("#no-spells-found")),
         nav1 = angular.element(document.querySelector("#doc-nav")),
-        nav2 = angular.element(document.querySelector("#sof-nav"));
+        nav2 = angular.element(document.querySelector("#sof-nav")); 
         
     var requestLibName = app.api + "lib?language=";
     var requestFromSOF = "";
@@ -31,7 +31,6 @@
 
 
     $scope.searchstr = $rootScope.history;
-
     $http.get( request )
       .success(function(data, status, header, config) {
 
@@ -73,8 +72,9 @@
         nav1.addClass("active");
         nav2.removeClass("active");
       } else if(section == 'sof-panel'){
-        nav1.removeClass("active");
         nav2.addClass("active");
+        nav1.removeClass("active");
+        
       } else{
 
       }
