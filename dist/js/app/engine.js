@@ -6,9 +6,13 @@
   var app = angular.module('engine', ['ui.router', 'ui.bootstrap', 'chieffancypants.loadingBar', 'tableSort', 'ngSanitize']);
   app.filter('getKey',['$sce',function($sce){
      return function(content,match) {
-            var reg = new　RegExp(match,'g');
-            content.replace(reg,'<em>'+match+'</em>');
-            return $sce.trustAsHtml(content);
+            var str = content.toString();
+            var search_list = match.split(" ");
+            for( var i=0;i<search_list.length;i++) {
+              str = str.replace(new RegExp("(" + search_list[i] + ")","ig"), '<span style="color:red">' + search_list[i] + '</span>');
+            }
+            
+            return $sce.trustAsHtml(str);
       }
   }]) 
   app.controller("HomeController", function($scope, $rootScope, $http, $location, $anchorScroll) {
@@ -28,6 +32,7 @@
     var requestLibName = app.api + "lib?language=";
     var requestFromSOF = "";
     var requestFromDoc = "";
+    var requestFromRecommend = "";
 
 
     $scope.searchstr = $rootScope.history;
@@ -49,6 +54,7 @@
     $scope.showNPCs = true;
     $scope.showQuests = true;
     $scope.showSpells = true;
+    $scope.isFuzzy = true;
     $scope.languages = ["java"];
     $scope.language = $scope.languages[0]; // default first language(java)
     $scope.libNames = ["choose lib"];
@@ -81,13 +87,31 @@
 
     };
 
+    function highlight(str){
+      var search_list = $scope.searchstr.split(" ");
+      for( var i=0;i<search_list.length;i++) {
+        str = str.replace(new RegExp("(" + search_list[i] + ")","ig"), '<strong style="color:red">' + search_list[i] + '</strong>');
+      }
+      // console.log(str);
+      return str;
+    }
+
+    function html_encode(str)   
+    {   
+      var s = "";   
+      if (str.length == 0) return ""; 
+      s = str.replace(/</, "&#60");   
+      s = s.replace(/>/, "&#62");   
+      return s;   
+    }   
+
     $scope.search = function(searchstr) {
 
       if ($scope.lib == null) {
         alert("Please select a lib name.");
         return;
       }
-      if (typeof searchstr === 'undefined') {
+      if (typeof searchstr === 'undefined' || searchstr == "") {
         alert("Please insert a function name or class name");
         return;
       }
@@ -105,7 +129,7 @@
       noQuestsFound.addClass("hidden");
       noSpellsFound.addClass("hidden");
 
-      /* looking for items... */
+      /* looking for api doc... */
       requestFromDoc = app.api + "qFromDoc?lib=" + $scope.lib +"&keyword=" + searchstr;
 
       $http.get( requestFromDoc )
@@ -116,7 +140,9 @@
           var t = {};
           t["title"] = d["title"];
           t["url"] = d["url"];
-          t["code"] = d["code"].toString().replace(new RegExp("(" + $scope.searchstr + ")","ig"), "<strong>" + $scope.searchstr + "</strong>");
+          var temp_code = html_encode(d["code"].toString());
+          t["code"] = highlight(temp_code);
+          t["html"] = "<strong>" + $scope.searchstr + "</strong>"
           temp.push(t);
         }
         $scope.items = temp;
@@ -131,13 +157,26 @@
         console.log("Error in api doc $http.get");
       });
 
-      /* looking for NPCs... */
-      requestFromSOF = app.api + "q?lib=" + $scope.lib + "&keyword=" + searchstr;
+      /* looking for sof... */
+      if($scope.isFuzzy){
+        requestFromSOF = app.api + "q?lib=" + $scope.lib + "&keyword=" + searchstr;
+      } else {
+        requestFromSOF = app.api_py + "search?lib=" + $scope.lib + "&q=" + searchstr;
+      }
 
       $http.get( requestFromSOF )
         .success(function(data, status, header, config) {
-
-        $scope.npcs = data["sof"];
+        var temp = [];
+        for(var i = 0;i<data["sof"].length;i++){
+          var d = data["sof"][i];
+          var t = {};
+          t["title"] = d["title"];
+          t["url"] = d["url"];
+          var temp_code = html_encode(d["code"].toString());
+          t["code"] = highlight(temp_code);
+          temp.push(t);
+        }
+        $scope.npcs = temp;
         if ($scope.npcs.length > 0) { // we found npcs
           npcPanel.removeClass("hidden");
         } else {  // we didn't find any npcs
@@ -149,13 +188,13 @@
         console.log("Error in NPC $http.get");
       });
 
-      /* looking for Quests... */
-      request = app.api + "quest/template/" + searchstr;
+      /* looking for recommendation... */
+      requestFromRecommend = app.api_py + "recommend?q=" + searchstr +"&lib=" + $scope.lib;
 
-      $http.get( request )
+      $http.get( requestFromRecommend )
         .success(function(data, status, header, config) {
-
-        $scope.quests = data;
+        console.log(data);
+        $scope.quests = data["result"];
         if ($scope.quests.length > 0) { // we found quests
           questPanel.removeClass("hidden");
         } else {  // we didn't find any quests

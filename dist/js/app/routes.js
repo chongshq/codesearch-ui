@@ -14,7 +14,8 @@
     .state('home', {
       url: '/home',
       controller: 'HomeController',
-      templateUrl: 'partials/home.html'
+      templateUrl: 'partials/home.html',
+      css: "css/style.css"
     })
     .state('npc', {
       url: '/npc/:id',
